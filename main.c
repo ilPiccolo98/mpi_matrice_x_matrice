@@ -168,7 +168,7 @@ void send_submatrix(int rank_processor, int processors, int processor_destinatio
     MPI_Send(matrix_entry_point, 1, submatrix, processor_destination, 10 + processor_destination, comm);
 }
 
-int* get_matrix_entry_points(int processors, float *matrix, int size_matrices, int size_submatrices, int grid_columns, MPI_Comm grid)
+int* get_matrix_entry_points(int processors, float *matrix, int size_matrices, int size_submatrices, MPI_Comm grid)
 {
     int i;
     int *entry_points = (int*)calloc(processors, sizeof(int));
@@ -188,7 +188,7 @@ void distribute_submatrices(int rank_processor, int processors, float *matrix, i
 {
     if(rank_processor == 0)
     {
-        int *entry_points = get_matrix_entry_points(processors, matrix, size_matrices, size_submatrices, grid_columns, grid);
+        int *entry_points = get_matrix_entry_points(processors, matrix, size_matrices, size_submatrices, grid);
         int i;
         for(i = 1; i != processors; ++i)
             send_submatrix(rank_processor, processors, i, matrix + entry_points[i], size_matrices, size_submatrices, grid);
