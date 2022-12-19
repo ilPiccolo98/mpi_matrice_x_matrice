@@ -2,9 +2,9 @@
 
 #PBS -q studenti
 #PBS -l nodes=8:ppn=8
-#PBS -N matrix_x_matrix_300_x_300
-#PBS -o matrix_x_matrix_300_x_300.out
-#PBS -e matrix_x_matrix_300_x_300.err
+#PBS -N matrix_x_matrix_show_output
+#PBS -o matrix_x_matrix_show_output.out
+#PBS -e matrix_x_matrix_show_output.err
 
 sort -u $PBS_NODEFILE > hostlist
 NCPU=`wc -l < hostlist`
@@ -25,12 +25,10 @@ echo PBS: node file is $PBS_NODEFILE
 echo PBS: current home directory is $PBS_O_HOME
 echo PBS: PATH = $PBS_O_PATH
 echo ------------------------------------------------------
-echo "Eseguo/usr/lib64/openmpi/1.4-gcc/bin/mpicc -o $PBS_O_WORKDIR/matrix_x_matrix_300_x_300 $PBS_O_WORKDIR/main.c"
-/usr/lib64/openmpi/1.4-gcc/bin/mpicc -o $PBS_O_WORKDIR/matrix_x_matrix_300_x_300 $PBS_O_WORKDIR/main.c
+echo "Eseguo/usr/lib64/openmpi/1.4-gcc/bin/mpicc -o $PBS_O_WORKDIR/matrix_x_matrix_show_output $PBS_O_WORKDIR/main.c"
+/usr/lib64/openmpi/1.4-gcc/bin/mpicc -o $PBS_O_WORKDIR/matrix_x_matrix_show_output $PBS_O_WORKDIR/main.c
 
 
-for i in 1 2
-do
-    echo "Executing with $i processors"
-    /usr/lib64/openmpi/1.4-gcc/bin/mpiexec -machinefile hostlist -n ($i * $i) $PBS_O_WORKDIR/matrix_x_matrix_300_x_300 $i $i 300 1 1
-done
+echo "Executing it with 4 processor"
+echo "Eseguo /usr/lib64/openmpi/1.4-gcc/bin/mpiexec -machinefile hostlist -n 4 $PBS_O_WORKDIR/matrix_x_matrix_show_output 2 2 4 0 0"
+/usr/lib64/openmpi/1.4-gcc/bin/mpiexec -machinefile hostlist -n 4 $PBS_O_WORKDIR/matrix_x_matrix_show_output 2 2 4 0 0

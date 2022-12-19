@@ -1,0 +1,58 @@
+------------------------------------------------------
+ This job is allocated on 8 cpu(s)
+Job is running on node(s): 
+wn273.scope.unina.it
+wn274.scope.unina.it
+wn275.scope.unina.it
+wn276.scope.unina.it
+wn277.scope.unina.it
+wn278.scope.unina.it
+wn279.scope.unina.it
+wn280.scope.unina.it
+------------------------------------------------------
+PBS: qsub is running on ui-studenti.scope.unina.it
+PBS: originating queue is studenti
+PBS: executing queue is studenti
+PBS: working directory is /homes/DMA/PDC/2022/PCCGPP98C/matrix_x_matrix
+PBS: execution mode is PBS_BATCH
+PBS: job identifier is 4007089.torque02.scope.unina.it
+PBS: job name is matrix_x_matrix_show_output
+PBS: node file is /var/spool/pbs/aux//4007089.torque02.scope.unina.it
+PBS: current home directory is /homes/DMA/PDC/2022/PCCGPP98C
+PBS: PATH = /usr/lib64/openmpi/1.2.7-gcc/bin:/usr/kerberos/bin:/opt/exp_soft/unina.it/intel/composer_xe_2013_sp1.3.174/bin/intel64:/opt/exp_soft/unina.it/intel/composer_xe_2013_sp1.3.174/mpirt/bin/intel64:/opt/exp_soft/unina.it/intel/composer_xe_2013_sp1.3.174/bin/intel64:/opt/exp_soft/unina.it/intel/composer_xe_2013_sp1.3.174/bin/intel64_mic:/opt/exp_soft/unina.it/intel/composer_xe_2013_sp1.3.174/debugger/gui/intel64:/opt/d-cache/srm/bin:/opt/d-cache/dcap/bin:/opt/edg/bin:/opt/glite/bin:/opt/globus/bin:/opt/lcg/bin:/usr/local/bin:/bin:/usr/bin:/opt/exp_soft/HADOOP/hadoop-1.0.3/bin:/opt/exp_soft/unina.it/intel/composerxe/bin/intel64/:/opt/exp_soft/unina.it/MPJExpress/mpj-v0_38/bin:/homes/DMA/PDC/2022/PCCGPP98C/bin
+------------------------------------------------------
+Eseguo/usr/lib64/openmpi/1.4-gcc/bin/mpicc -o /homes/DMA/PDC/2022/PCCGPP98C/matrix_x_matrix/matrix_x_matrix_show_output /homes/DMA/PDC/2022/PCCGPP98C/matrix_x_matrix/main.c
+Executing it with 4 processor
+Eseguo /usr/lib64/openmpi/1.4-gcc/bin/mpiexec -machinefile hostlist -n 4 /homes/DMA/PDC/2022/PCCGPP98C/matrix_x_matrix/matrix_x_matrix_show_output 2 2 4 0 0
+---------------------------------------------
+Matrix A:
+Row: 1
+48.375690 19.402634 80.371536 98.165825 
+Row: 2
+14.022713 -29.488129 49.957424 -23.367783 
+Row: 3
+-58.891632 -74.670441 40.550392 6.979027 
+Row: 4
+-6.822571 77.565216 -13.497009 -6.394936 
+---------------------------------------------
+Matrix B:
+Row: 1
+-84.900620 -85.883606 55.407257 37.321716 
+Row: 2
+26.548210 -32.507446 -88.409836 13.448372 
+Row: 3
+-66.707916 32.582321 -13.647392 75.325363 
+Row: 4
+-44.519287 -6.492737 -3.007980 -96.143600 
+---------------------------------------------
+Result:
+Row: 1
+-13323.710938 -2804.082520 -427.162231 -1317.603027 
+Row: 2
+-4265.632812 1533.712280 2772.501709 6136.508301 
+Row: 3
+1.836060 8761.083984 2764.177979 -818.648499 
+Row: 4
+3823.513672 -2333.743408 -7032.112793 386.660828 
+---------------------------------------------
+Time elapsed: 0.000177

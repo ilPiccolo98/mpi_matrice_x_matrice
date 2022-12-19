@@ -294,7 +294,6 @@ void get_multiplication_product(int rank_processor, int processors, float *produ
 
 int main(int argc, char *argv[])
 {
-    printf("size of float: %d\n", sizeof(float));
     srand(time(NULL));
     MPI_Init(&argc, &argv);
     int rank_processor = 0;

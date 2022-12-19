@@ -1,0 +1,38 @@
+------------------------------------------------------
+ This job is allocated on 8 cpu(s)
+Job is running on node(s): 
+wn273.scope.unina.it
+wn274.scope.unina.it
+wn275.scope.unina.it
+wn276.scope.unina.it
+wn277.scope.unina.it
+wn278.scope.unina.it
+wn279.scope.unina.it
+wn280.scope.unina.it
+------------------------------------------------------
+PBS: qsub is running on ui-studenti.scope.unina.it
+PBS: originating queue is studenti
+PBS: executing queue is studenti
+PBS: working directory is /homes/DMA/PDC/2022/PCCGPP98C/matrix_x_matrix
+PBS: execution mode is PBS_BATCH
+PBS: job identifier is 4007091.torque02.scope.unina.it
+PBS: job name is matrix_x_matrix_hide_generated_matrices
+PBS: node file is /var/spool/pbs/aux//4007091.torque02.scope.unina.it
+PBS: current home directory is /homes/DMA/PDC/2022/PCCGPP98C
+PBS: PATH = /usr/lib64/openmpi/1.2.7-gcc/bin:/usr/kerberos/bin:/opt/exp_soft/unina.it/intel/composer_xe_2013_sp1.3.174/bin/intel64:/opt/exp_soft/unina.it/intel/composer_xe_2013_sp1.3.174/mpirt/bin/intel64:/opt/exp_soft/unina.it/intel/composer_xe_2013_sp1.3.174/bin/intel64:/opt/exp_soft/unina.it/intel/composer_xe_2013_sp1.3.174/bin/intel64_mic:/opt/exp_soft/unina.it/intel/composer_xe_2013_sp1.3.174/debugger/gui/intel64:/opt/d-cache/srm/bin:/opt/d-cache/dcap/bin:/opt/edg/bin:/opt/glite/bin:/opt/globus/bin:/opt/lcg/bin:/usr/local/bin:/bin:/usr/bin:/opt/exp_soft/HADOOP/hadoop-1.0.3/bin:/opt/exp_soft/unina.it/intel/composerxe/bin/intel64/:/opt/exp_soft/unina.it/MPJExpress/mpj-v0_38/bin:/homes/DMA/PDC/2022/PCCGPP98C/bin
+------------------------------------------------------
+Eseguo/usr/lib64/openmpi/1.4-gcc/bin/mpicc -o /homes/DMA/PDC/2022/PCCGPP98C/matrix_x_matrix/matrix_x_matrix_hide_generated_matrices /homes/DMA/PDC/2022/PCCGPP98C/matrix_x_matrix/main.c
+Executing it with 4 processor
+Eseguo /usr/lib64/openmpi/1.4-gcc/bin/mpiexec -machinefile hostlist -n 4 /homes/DMA/PDC/2022/PCCGPP98C/matrix_x_matrix/matrix_x_matrix_hide_generated_matrices 2 2 4 1 0
+---------------------------------------------
+Result:
+Row: 1
+213.258575 696.672485 348.577667 -582.628296 
+Row: 2
+-598.733032 770.455200 1585.496826 1836.915039 
+Row: 3
+8830.206055 -6555.803223 4176.314941 -1063.381348 
+Row: 4
+10181.612305 -11209.970703 9612.801758 730.882324 
+---------------------------------------------
+Time elapsed: 0.000178
