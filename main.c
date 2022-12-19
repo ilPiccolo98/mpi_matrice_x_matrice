@@ -79,28 +79,43 @@ int get_grid_rows_from_argv(int argc, char *argv[])
         exit(-1);
     }
     int grid_rows = atoi(argv[INDEX_GRID_ROWS]);
+    if(grid_rows <= 0)
+    {
+        fprintf(stderr, "Error! Grid rows incorrect value\n");
+        exit(-1);    
+    }
     return grid_rows;
 }
 
 int get_grid_columns_from_argv(int argc, char *argv[])
 {
-    if(argc < INDEX_GRID_ROWS)
+    if(argc < INDEX_GRID_COLUMNS)
     {
         fprintf(stderr, "Error! Not enough argv arguments\n");
         exit(-1);
     }
     int grid_columns = atoi(argv[INDEX_GRID_COLUMNS]);
+    if(grid_columns <= 0)
+    {
+        fprintf(stderr, "Error! Grid columns incorrect value\n");
+        exit(-1);    
+    }
     return grid_columns;
 }
 
 int get_size_matrix_from_argv(int argc, char *argv[])
 {
-    if(argc < INDEX_GRID_ROWS)
+    if(argc < INDEX_SIZE_MATRICES)
     {
         fprintf(stderr, "Error! Not enough argv arguments\n");
         exit(-1);
     }
     int size_matrices = atoi(argv[INDEX_SIZE_MATRICES]);
+    if(size_matrices <= 1)
+    {
+        fprintf(stderr, "Error! Size matrices incorrect value\n");
+        exit(-1); 
+    }
     return size_matrices;
 }
 
@@ -156,7 +171,6 @@ void send_submatrix(int rank_processor, int processors, int processor_destinatio
 int* get_matrix_entry_points(int processors, float *matrix, int size_matrices, int size_submatrices, int grid_columns, MPI_Comm grid)
 {
     int i;
-    int index_matrix_entry_point = 0;
     int *entry_points = (int*)calloc(processors, sizeof(int));
     entry_points[0] = 0;
     int coordinates[2];
@@ -203,7 +217,7 @@ void execute_matrix_multiplication(float *matrix_a, float *matrix_b, float *dest
                 destination[row * size_matrix + column_destination] += matrix_a[row * size_matrix + column] * matrix_b[column * size_matrix + column_destination];
 }
 
-float* get_block_partial_product(int rank_processor, float *submatrix_a, float *submatrix_b, int size_submatrix, int grid_rows, int grid_columns, int *coordinates, MPI_Comm grid_rows_comm, MPI_Comm grid_columns_comm)
+float* get_block_partial_product(float *submatrix_a, float *submatrix_b, int size_submatrix, int grid_rows, int grid_columns, int *coordinates, MPI_Comm grid_rows_comm, MPI_Comm grid_columns_comm)
 {
     float *submatrix_block = (float*)calloc(size_submatrix * size_submatrix, sizeof(float));
     int sender_coordinates[2];
@@ -241,7 +255,6 @@ float* get_block_partial_product(int rank_processor, float *submatrix_a, float *
                 memcpy(submatrix_received, submatrix_a, size_submatrix * size_submatrix * sizeof(float));
             sender_id = (sender_id + 1) % grid_rows;
             MPI_Bcast(submatrix_received, size_submatrix * size_submatrix, MPI_FLOAT, sender_id, grid_rows_comm);
-            printf("size submatrix: %d\n", size_submatrix * size_submatrix);
             MPI_Send(submatrix_b, size_submatrix * size_submatrix, MPI_FLOAT, destination_submatrix_b_id, 30, grid_columns_comm);
             MPI_Recv(submatrix_b, size_submatrix * size_submatrix, MPI_FLOAT, sender_submatrix_b_id, 30, grid_columns_comm, MPI_STATUS_IGNORE);
             execute_matrix_multiplication(submatrix_received, submatrix_b, submatrix_block, size_submatrix);
@@ -338,7 +351,7 @@ int main(int argc, char *argv[])
     distribute_submatrices(rank_processor, processors, matrix_a, size_matrices, submatrix_a, size_submatrices, grid_columns, grid_comm);
     distribute_submatrices(rank_processor, processors, matrix_b, size_matrices, submatrix_b, size_submatrices, grid_columns, grid_comm);
     double time_beginning = MPI_Wtime();
-    float *submatrix_block = get_block_partial_product(grid_rank_processor, submatrix_a, submatrix_b, size_submatrices, grid_rows, grid_columns, coordinates, grid_rows_comm, grid_columns_comm);
+    float *submatrix_block = get_block_partial_product(submatrix_a, submatrix_b, size_submatrices, grid_rows, grid_columns, coordinates, grid_rows_comm, grid_columns_comm);
     double time_end = MPI_Wtime();
     double elapsed_time = time_end - time_beginning;
     double max_elapsed_time = 0;
