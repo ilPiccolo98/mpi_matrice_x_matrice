@@ -184,7 +184,7 @@ int* get_matrix_entry_points(int processors, float *matrix, int size_matrices, i
     return entry_points;
 }
 
-void distribute_submatrices(int rank_processor, int processors, float *matrix, int size_matrices, float *submatrix, int size_submatrices, int grid_columns, MPI_Comm grid)
+void distribute_submatrices(int rank_processor, int processors, float *matrix, int size_matrices, float *submatrix, int size_submatrices, MPI_Comm grid)
 {
     if(rank_processor == 0)
     {
@@ -347,8 +347,8 @@ int main(int argc, char *argv[])
     MPI_Comm_rank(grid_comm, &grid_rank_processor);
     int grid_processors = 0;
     MPI_Comm_size(grid_comm, &grid_processors);
-    distribute_submatrices(rank_processor, processors, matrix_a, size_matrices, submatrix_a, size_submatrices, grid_columns, grid_comm);
-    distribute_submatrices(rank_processor, processors, matrix_b, size_matrices, submatrix_b, size_submatrices, grid_columns, grid_comm);
+    distribute_submatrices(rank_processor, processors, matrix_a, size_matrices, submatrix_a, size_submatrices, grid_comm);
+    distribute_submatrices(rank_processor, processors, matrix_b, size_matrices, submatrix_b, size_submatrices, grid_comm);
     double time_beginning = MPI_Wtime();
     float *submatrix_block = get_block_partial_product(submatrix_a, submatrix_b, size_submatrices, grid_rows, grid_columns, coordinates, grid_rows_comm, grid_columns_comm);
     double time_end = MPI_Wtime();
