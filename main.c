@@ -14,6 +14,135 @@
 #define MIN_RANDOM_NUMBER 100
 #define MAX_RANDOM_NUMBER -100
 
+// ----------------------------------------------------------------------------------------------------
+// | SCOPO                                                                                            
+// | PROGRAMMA PER ESEGUIRE IL PRODOTTO TRA MATRICE E MATRICE IN PARALLELO SU UN'ARCHITETTURA A MEMORIA 
+// | DISTRIBUITA TRAMITE LA LIBRERIA MPI. IL PROGRAMMA PUO' ESEGUIRE QUESTA OPERAZIONE CON MATRICI TRAMITE 
+// | LA STRATEGIA BROADCAST MULTIPLY ROLLING INDICANDO LA DIMENSIONE DI DELLE MATRICI. 
+// | QUINDI PRIMA DI ESEGUIRE IL PROGRAMMA, IN INGRESSO E' NECESSARIO INDICARE IL NUMERO DI RIGHE E DI COLONNE DELLE MATRICI. 
+// | SUCCESSIVAMENTE IL PROGRAMMA SI OCCUPERA' DELLA CREAZIONE DELLE MATRICI CON VALORI CASUALI. IL PASSO
+// | SUCCESSIVO SARA' QUELLO DI ESEGUIRE L'OPERAZIONE DI PRODOTTO TRA MATRICE E MATRICI. COME GIA' 
+// | ANTICIPATO, VERRA' ESEGUITA IN PARALLELO USUFRUENDO DELLE FUNZIONALITA' DELLA LIBRERIA MPI. 
+// | L'ALGORITMO FARA' USO DI UNA GRIGLIA DI PROCESSORI PER ESEGUIRE L'ALGORITMO BROADCAST MULTIPLY ROLLING. 
+// | NEL CASO IN CUI CI SONO ERRORI, IL PROGRAMMA TERMINERA' SENZA SVOLGERE L'OPERAZIONE DI MOLTIPLICAZIONE 
+// | RESTITUENDO UN MESSAGGIO DI ERRORE NEL FLUSSO DI ERRORE.                         
+// ----------------------------------------------------------------------------------------------------
+// | ISTRUZIONI PER L'USO                                                                             
+// | IL PRIMO PASSO PER L'ESECUZIONE DELL'ALGORITMO E' LA COMPILAZIONE DEL SORGENTE VIENE EFFETTUATA
+// | TRAMITE IL COMANDO: mpicc -o percorso/nome_file_output percorso/main.c  
+// | E SUCCESSIVAMENTE BISOGNA ESEGUIRE IL PROGRAMMA A RIGA DI COMANDO CON I VARI PARAMETRI. 
+// | TRAMITE IL COMANDO: mpiexec -machinefile hostlist -n {N_PROCESSORI} percorso/file_eseguibile RIGHE_GRIGLIA COLONNE_GRIGLIA DIMENSIONE_MATRICI NASCONDI_MATRICI NASCONDI_RISULTATO
+// | IN TOTALE I PARAMETRI DA ESEGUIRE SONO 5. IL PRIMO INDICA IL NUMERO DI RIGHE DELLA GRIGLIA, IL SECONDO IL NUMERO
+// | DI COLONNE DELLA GRIGLIA. IL TERZO INDICA LA DIMENSIONE DELLE MATRICI DA GENERARE IL QUARTO INDICA SE SI 
+// | VOGLIONO STAMPARE O MENO LE MATRICI GENERATE E IL QUINTO INDICA SE SI VUOLE STAMPARE IL PRODOTTO CALCOLATO. 
+// | QUESTO E' UN ESEMPIO DI ESECUZIONE DEL PROGRAMMA A RIGA DI COMAND0:
+// | mpiexec -machinefile hostlist -n {N_PROCESSORI} percorso/file_eseguibile RIGHE_GRIGLIA COLONNE_GRIGLIA DIMENSIONE_MATRICI NASCONDI_MATRICI NASCONDI_RISULTATO
+// | I PARAMETRI RIGHE_GRIGLIA E COLONNE_GRIGLIA DEVONO AVERE COME VALORE UN INTERO MAGGIORE O UGUALE DI ZERO,
+// | Il PARAMETRO DIMENSIONE_MATRICI DEVE AVERE COME VALORE UN INTERO MAGGIORE O UGUALE DI ZERO,
+// | I PARAMETRI NASCONDI_MATRICI E NASCONDI_RISULTATO POSSONO AVERE COME VALORE O 0 O 1.
+// | ALTRIMENTI SI AVRA' UN MESSAGGIO DI ERRORE NEL FLUSSO DI ERRORI E IL PROGRAMMA TERMINERA' PRIMA
+// | DELLA FINE DELL'ESECUZIONE.                              
+// ----------------------------------------------------------------------------------------------------
+// | ESEMPI D'USO                                                                                     
+// | CON IL SEGUENTE INPUT IL PROGRAMMA GENERERA' DUE MATRICI CON 4 RIGHE E 4 COLONNE
+// | E STAMPERA' L'OUTPUT INIZIALE E FINALE E IL TUTTO VERRA' ESEGUITO CON UNA GRIGLIA 2X2
+// | INPUT INSERITO: 
+// #!/bin/bash
+// 
+// #PBS -q studenti
+// #PBS -l nodes=8:ppn=8
+// #PBS -N matrix_x_matrix_show_output
+// #PBS -o matrix_x_matrix_show_output.out
+// #PBS -e matrix_x_matrix_show_output.err
+// 
+// sort -u $PBS_NODEFILE > hostlist
+// NCPU=`wc -l < hostlist`
+// echo ------------------------------------------------------
+// echo ' This job is allocated on '${NCPU}' cpu(s)'
+// echo 'Job is running on node(s): '
+// cat hostlist
+// PBS_O_WORKDIR=$PBS_O_HOME/matrix_x_matrix
+// echo ------------------------------------------------------
+// echo PBS: qsub is running on $PBS_O_HOST
+// echo PBS: originating queue is $PBS_O_QUEUE
+// echo PBS: executing queue is $PBS_QUEUE
+// echo PBS: working directory is $PBS_O_WORKDIR
+// echo PBS: execution mode is $PBS_ENVIRONMENT
+// echo PBS: job identifier is $PBS_JOBID
+// echo PBS: job name is $PBS_JOBNAME
+// echo PBS: node file is $PBS_NODEFILE
+// echo PBS: current home directory is $PBS_O_HOME
+// echo PBS: PATH = $PBS_O_PATH
+// echo ------------------------------------------------------
+// echo "Eseguo/usr/lib64/openmpi/1.4-gcc/bin/mpicc -o $PBS_O_WORKDIR/matrix_x_matrix_show_output $PBS_O_WORKDIR/main.c"
+// /usr/lib64/openmpi/1.4-gcc/bin/mpicc -o $PBS_O_WORKDIR/matrix_x_matrix_show_output $PBS_O_WORKDIR/main.c
+// 
+// 
+// echo "Executing it with 4 processor"
+// echo "Eseguo /usr/lib64/openmpi/1.4-gcc/bin/mpiexec -machinefile hostlist -n 4 $PBS_O_WORKDIR/matrix_x_matrix_show_output 2 2 4 0 0"
+// /usr/lib64/openmpi/1.4-gcc/bin/mpiexec -machinefile hostlist -n 4 $PBS_O_WORKDIR/matrix_x_matrix_show_output 2 2 4 0 0
+// | OUTPUT GENERATO:
+// ------------------------------------------------------
+// This job is allocated on 8 cpu(s)
+// Job is running on node(s): 
+// wn273.scope.unina.it
+// wn274.scope.unina.it
+// wn275.scope.unina.it
+// wn276.scope.unina.it
+// wn277.scope.unina.it
+// wn278.scope.unina.it
+// wn279.scope.unina.it
+// wn280.scope.unina.it
+// ------------------------------------------------------
+// PBS: qsub is running on ui-studenti.scope.unina.it
+// PBS: originating queue is studenti
+// PBS: executing queue is studenti
+// PBS: working directory is /homes/DMA/PDC/2022/PCCGPP98C/matrix_x_matrix
+// PBS: execution mode is PBS_BATCH
+// PBS: job identifier is 4007089.torque02.scope.unina.it
+// PBS: job name is matrix_x_matrix_show_output
+// PBS: node file is /var/spool/pbs/aux//4007089.torque02.scope.unina.it
+// PBS: current home directory is /homes/DMA/PDC/2022/PCCGPP98C
+// PBS: PATH = /usr/lib64/openmpi/1.2.7-gcc/bin:/usr/kerberos/bin:/opt/exp_soft/unina.it/intel/composer_xe_2013_sp1.3.174/bin/intel64:/opt/exp_soft/unina.it/intel/composer_xe_2013_sp1.3.174/mpirt/bin/intel64:/opt/exp_soft/unina.it/intel/composer_xe_2013_sp1.3.174/bin/intel64:/opt/exp_soft/unina.it/intel/composer_xe_2013_sp1.3.174/bin/intel64_mic:/opt/exp_soft/unina.it/intel/composer_xe_2013_sp1.3.174/debugger/gui/intel64:/opt/d-cache/srm/bin:/opt/d-cache/dcap/bin:/opt/edg/bin:/opt/glite/bin:/opt/globus/bin:/opt/lcg/bin:/usr/local/bin:/bin:/usr/bin:/opt/exp_soft/HADOOP/hadoop-1.0.3/bin:/opt/exp_soft/unina.it/intel/composerxe/bin/intel64/:/opt/exp_soft/unina.it/MPJExpress/mpj-v0_38/bin:/homes/DMA/PDC/2022/PCCGPP98C/bin
+// ------------------------------------------------------
+// Eseguo/usr/lib64/openmpi/1.4-gcc/bin/mpicc -o /homes/DMA/PDC/2022/PCCGPP98C/matrix_x_matrix/matrix_x_matrix_show_output /homes/DMA/PDC/2022/PCCGPP98C/matrix_x_matrix/main.c
+// Executing it with 4 processor
+// Eseguo /usr/lib64/openmpi/1.4-gcc/bin/mpiexec -machinefile hostlist -n 4 /homes/DMA/PDC/2022/PCCGPP98C/matrix_x_matrix/matrix_x_matrix_show_output 2 2 4 0 0
+// ---------------------------------------------
+// Matrix A:
+// Row: 1
+// 48.375690 19.402634 80.371536 98.165825 
+// Row: 2
+// 14.022713 -29.488129 49.957424 -23.367783 
+// Row: 3
+// -58.891632 -74.670441 40.550392 6.979027 
+// Row: 4
+// -6.822571 77.565216 -13.497009 -6.394936 
+// ---------------------------------------------
+// Matrix B:
+// Row: 1
+// -84.900620 -85.883606 55.407257 37.321716 
+// Row: 2
+// 26.548210 -32.507446 -88.409836 13.448372 
+// Row: 3
+// -66.707916 32.582321 -13.647392 75.325363 
+// Row: 4
+// -44.519287 -6.492737 -3.007980 -96.143600 
+// ---------------------------------------------
+// Result:
+// Row: 1
+// -13323.710938 -2804.082520 -427.162231 -1317.603027 
+// Row: 2
+// -4265.632812 1533.712280 2772.501709 6136.508301 
+// Row: 3
+// 1.836060 8761.083984 2764.177979 -818.648499 
+// Row: 4
+// 3823.513672 -2333.743408 -7032.112793 386.660828 
+// ---------------------------------------------
+// Time elapsed: 0.000177
+
+
+
 void print_matrix(float *matrix, int rows, int columns)
 {
     int row, column;
